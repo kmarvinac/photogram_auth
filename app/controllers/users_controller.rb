@@ -16,4 +16,12 @@ class UsersController < ApplicationController
     render("users/my_likes.html.erb")
   end
 
+  def sign_in
+    redirect_to("/users/sign_in")
+  end
+
+  def sign_up
+    redirect_to("/users/sign_up")
+  end
+
 end
