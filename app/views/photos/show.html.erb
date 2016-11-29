@@ -1,11 +1,9 @@
-<br>
-
 <div class = "container">
   <div class = "row">
     <div class = "col-md-8 col-md-offset-2">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title"><%= @photo.id %> <small><%= time_ago_in_words(@photo.created_at) %> ago</small> </h3>
+          <h3 class="panel-title"><%= @photo.user.username %> <small><%= time_ago_in_words(@photo.created_at) %> ago</small> </h3>
         </div>
         <div class="panel-body">
           <a href = "/photos/<%= @photo.id %>">
@@ -13,10 +11,16 @@
           </a>
           <div class="panel-body">
             <!--make sure like button deletes and adds  -->
-
-            <a href = "/delete_like/<%= @photo.id %>" class = "btn btn-link">
+            <% if @my_like != nil %>
+            <a href = "/delete_like/<%= @my_like %>" class = "btn btn-link">
               <i class="fa fa-heart"></i>
             </a>
+            <% else %>
+            <a href = "/create_like" class = "btn btn-link">
+              <i class="fa fa-heart-o"></i>
+            </a>
+
+            <% end %>
             <!-- add all the likes for this particular photo -->
             <p>
               <%= @photo.fans.pluck(:username).to_sentence %> like this
@@ -24,29 +28,26 @@
 
             <!-- adding all the comments - go back and make a for each -->
 
-            <!-- <% Comment.where({ :photo_id => @photo.id }).each do |comment| %>
+            <% Comment.where(photo_id: @photo.id).each do |comment| %>
 
             <ul class = "media-list">
               <li class="media">
                 <div class="media-body">
                   <h6 class="media-heading">
-                    <a href="/users/1"><%= @photo.usernames.pluck(:username).to_sentence %>
+                    <a href="/users/<%= comment.user_id %>"><%= comment.user.username %>
                       <small>
-                        <%= time_ago_in_words(@photo.created_at) %>
+                        <%= time_ago_in_words(comment.created_at) %>
                       </small>
                     </a>
                   </h6>
                   <p>
-                    <%= Comment.where({ :photo_id => @photo.id, :user_id => @photo.user_id }).pluck(:body).to_sentence %>
+                    <%= comment.body %>
                   </p>
 
 
                 </div>
               </li>
-              <% end %> -->
-
-
-
+              <% end %>
 
               <!-- adding ability to submit comment -->
               <li class = "media">
@@ -54,8 +55,8 @@
                   <form action = "/create_comment" method = "post">
                     <input name="authenticity_token" type="hidden" value="current_user">
                     <!-- make the values dynamic below so they are attached to the right user/photo  -->
-                    <input type="hidden" name="photo_id" value="<%= @photo.user_id %>">
-                    <input type="hidden" name="user_id" value="1">
+                    <input type="hidden" name="photo_id" value="<%= @photo.id %>">
+                    <input type="hidden" name="user_id" value="<%= @photo.user_id %>">
                     <div class = "form-group">
                       <label for="body" class="sr-only">
                         Body
@@ -87,6 +88,19 @@
       </div>
 
       <% end %>
+    </div>
+  </div>
+
+
+  <div class = "row">
+
+    <div class="col-md-8 col-md-offset-2">
+
+      <div class="btn-group btn-group-justified">
+        <a href="/photos" class="btn btn-primary">
+          <i class="fa fa-chevron-left"></i>
+        </a>
+      </div>
     </div>
   </div>
 </div>

@@ -1,13 +1,93 @@
-<div class="page-header">
-  <h1>
-    Photos
-    <a href="/photos/new" class="btn btn-lg btn-success">New Photo</a>
-  </h1>
+<div class = "container">
+  <div class = "row">
+    <div class = "col-md-8 col-md-offset-2">
+      <div class="page-header">
+        <a href="/photos/new" class="btn btn-default btn-block">
+          <i class="fa fa-plus"></i>
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
 
 
+
 <% @photo.each do |photo| %>
-  <li class = "list-group-item">
-    <a href="/photos/<%= photo.id %>"> <%= photo.caption %><a>
-  </li>
+
+<div class = "container">
+  <div class = "row">
+    <div class = "col-md-8 col-md-offset-2">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><%= photo.user.username %> <small><%= time_ago_in_words(photo.created_at) %> ago</small> </h3>
+        </div>
+        <div class="panel-body">
+          <a href = "/photos/<%= photo.id %>">
+            <img src = "<%= photo.image %>" class = "img-responsive">
+          </a>
+          <div class="panel-body">
+            <!--make sure like button deletes and adds  -->
+            <!-- <% if @my_like != nil %>
+            <a href = "/delete_like/<%= @my_like %>" class = "btn btn-link">
+            <i class="fa fa-heart"></i>
+          </a>
+          <% else %> -->
+          <a href = "/create_like" class = "btn btn-link">
+            <i class="fa fa-heart-o"></i>
+          </a>
+          <!-- <% end %> -->
+
+          <!-- add all the likes for this particular photo -->
+          <p>
+            <%= photo.fans.pluck(:username).to_sentence %> like this
+          </p>
+
+          <!-- adding all the comments - go back and make a for each -->
+
+          <% Comment.where(photo_id: photo.id).each do |comment| %>
+
+          <ul class = "media-list">
+            <li class="media">
+              <div class="media-body">
+                <h6 class="media-heading">
+                  <a href="/users/<%= comment.user_id %>"><%= comment.user.username %>
+                    <small>
+                      <%= time_ago_in_words(comment.created_at) %>
+                    </small>
+                  </a>
+                </h6>
+                <p>
+                  <%= comment.body %>
+                </p>
+
+
+              </div>
+            </li>
+            <% end %>
+
+            <!-- adding ability to submit comment -->
+            <li class = "media">
+              <div class = "media-body">
+                <form action = "/create_comment" method = "post">
+                  <input name="authenticity_token" type="hidden" value="current_user">
+                  <!-- make the values dynamic below so they are attached to the right user/photo  -->
+                  <input type="hidden" name="photo_id" value="<%= photo.user_id %>">
+                  <input type="hidden" name="user_id" value="1">
+                  <div class = "form-group">
+                    <label for="body" class="sr-only">
+                      Body
+                    </label>
+                    <input type="text" id="body" name="body" placeholder="Add a comment..." class="form-control" required>
+                  </div>
+                </form>
+              </div>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 <% end %>

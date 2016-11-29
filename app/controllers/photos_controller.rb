@@ -7,6 +7,8 @@ class PhotosController < ApplicationController
 
   def show
     @photo = Photo.find(params[:id])
+    @my_like = @photo.likes.where(user_id: current_user.id).pluck(:id)[0]
+    
     render("photos/show.html.erb")
   end
 
